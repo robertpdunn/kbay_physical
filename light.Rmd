@@ -1,0 +1,59 @@
+---
+title: "Light"
+author: "Leslie"
+date: "March 14, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r}
+library(tidyverse)
+```
+```{r}
+light_reef44_2014 <- read_csv("https://www.zenodo.org/record/160214/files/light_reef44_2014.csv")
+```
+
+```{r}
+light_reef44_2015 <- read_csv("https://www.zenodo.org/record/160214/files/light_reef44_2015.csv")
+```
+
+```{r}
+light_reef25_2015 <- read_csv("https://www.zenodo.org/record/160214/files/light_reef25_2015.csv")
+```
+
+```{r}
+light_reef42_2014 <- read_csv("https://www.zenodo.org/record/160214/files/light_reef42_2014.csv")
+```
+
+```{r}
+light_reef42_2015 <- read_csv("https://www.zenodo.org/record/160214/files/light_reef42_2015.csv")
+```
+
+```{r}
+light_reef_himb_2014 <- read_csv("https://www.zenodo.org/record/160214/files/light_reefHIMB_2014.csv")
+```
+
+```{r}
+light_reef_himb_2015 <- read_csv("https://www.zenodo.org/record/160214/files/light_reefHIMB_2015.csv")
+```
+
+```{r}
+light_reef_25_2015 <- light_reef25_2015
+```
+
+```{r}
+light_reef_42_2015 <- light_reef42_2015
+```
+
+```{r}
+light_reef_42_2014 <- light_reef42_2014
+```
+```{r}
+light_reef_44_2014 <- light_reef44_2014
+```
+```{r}
+light_reef_44_2015 <- light_reef44_2015
+```
+
