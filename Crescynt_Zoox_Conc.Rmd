@@ -1,0 +1,80 @@
+---
+title: "zoox_conc"
+author: "GG"
+date: "March 14, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##First let's insert the csv file
+```{r}
+
+zoox <- read.csv("https://raw.githubusercontent.com/robertpdunn/kbay_physical/master/data/bleaching_symbionts.csv")
+head(zoox)
+
+```
+
+##Now let's open the tidyverse library
+
+```{r}
+library(tidyverse)
+```
+
+###and the dplyr library
+
+```{r}
+library(dplyr)
+```
+
+##Now remove unused columns
+
+```{r}
+head(zoox)
+
+zoox_min <- select(zoox, colony, date, reef, C.SH, D.SH, tot.SH, vis, days)
+head(zoox_min)
+```
+
+##Ok, now I want to create a new column that will transform date from a character to date using as.Date and mutate. 
+
+```{r}
+zoox_min %>% mutate(date_floor = as.Date(date, "%m/%d/%y"))
+```
+
+#Now that we have a date column in *date* format, we want to consolidate by month. We'll try this with tibbletime
+
+```{r}
+library(tibbletime) #install.packages("tibbletime")
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
