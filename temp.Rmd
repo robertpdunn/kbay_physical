@@ -8,6 +8,7 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
+library(tibbletime)
 ```
 
 ```{r read_temp_data}
@@ -44,10 +45,13 @@ reefHIMB_2015 <- read_csv("https://zenodo.org/record/46366/files/temp_reefHIMB_2
   select(date, time, temp)
 ```
 
-```{r}
-reef25 <- bind_rows(reef25_2014, reef25_2015)
-reef44 <- bind_rows(reef44_2014, reef44_2015)
-reef42 <- bind_rows(reef42_2014, reef42_2015)
-reefHIMB <- bind_rows(reefHIMB_2014, reefHIMB_2015)
+```{r combine_temp_data}
+reef25 <- bind_rows(reef25_2014, reef25_2015) %>% mutate(reef = "reef_25")
+reef44 <- bind_rows(reef44_2014, reef44_2015) %>% mutate(reef = "reef_44")
+reef42 <- bind_rows(reef42_2014, reef42_2015) %>% mutate(reef = "reef_42")
+reefHIMB <- bind_rows(reefHIMB_2014, reefHIMB_2015) %>% mutate(reef = "reef_himb")
+
+temp_data <- bind_rows(reef25, reef44, reef42, reefHIMB)
+temp_data
 ```
 
