@@ -11,49 +11,40 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 library(tidyverse)
 ```
-```{r}
-light_reef44_2014 <- read_csv("https://www.zenodo.org/record/160214/files/light_reef44_2014.csv")
-```
+
+Adding all 7 datasets
 
 ```{r}
-light_reef44_2015 <- read_csv("https://www.zenodo.org/record/160214/files/light_reef44_2015.csv")
-```
-
-```{r}
-light_reef25_2015 <- read_csv("https://www.zenodo.org/record/160214/files/light_reef25_2015.csv")
-```
-
-```{r}
-light_reef42_2014 <- read_csv("https://www.zenodo.org/record/160214/files/light_reef42_2014.csv")
-```
-
-```{r}
-light_reef42_2015 <- read_csv("https://www.zenodo.org/record/160214/files/light_reef42_2015.csv")
-```
-
-```{r}
+light_reef_44_2014 <- read_csv("https://www.zenodo.org/record/160214/files/light_reef44_2014.csv")
+light_reef_44_2015 <- read_csv("https://www.zenodo.org/record/160214/files/light_reef44_2015.csv")
+light_reef_25_2015 <- read_csv("https://www.zenodo.org/record/160214/files/light_reef25_2015.csv")
+light_reef_42_2014 <- read_csv("https://www.zenodo.org/record/160214/files/light_reef42_2014.csv")
+light_reef_42_2015 <- read_csv("https://www.zenodo.org/record/160214/files/light_reef42_2015.csv")
 light_reef_himb_2014 <- read_csv("https://www.zenodo.org/record/160214/files/light_reefHIMB_2014.csv")
-```
-
-```{r}
 light_reef_himb_2015 <- read_csv("https://www.zenodo.org/record/160214/files/light_reefHIMB_2015.csv")
 ```
 
-```{r}
-light_reef_25_2015 <- light_reef25_2015
-```
+Adding a column that denotes reef in each dataset
 
 ```{r}
-light_reef_42_2015 <- light_reef42_2015
+light_reef_25_2015$reef <- "reef_25"
+light_reef_42_2015$reef <- "reef_42"
+light_reef_42_2014$reef <- "reef_42"
+light_reef_44_2014$reef <- "reef_44"
+light_reef_44_2015$reef <- "reef_44"
+light_reef_himb_2014$reef <- "reef_himb"
+light_reef_himb_2015$reef <- "reef_himb"
 ```
 
+creating one dataset 
+
 ```{r}
-light_reef_42_2014 <- light_reef42_2014
-```
-```{r}
-light_reef_44_2014 <- light_reef44_2014
-```
-```{r}
-light_reef_44_2015 <- light_reef44_2015
+light_all <- bind_rows(list(light_reef_25_2015,light_reef_42_2014,light_reef_42_2015, light_reef_44_2014, light_reef_44_2015, light_reef_himb_2014, light_reef_himb_2015))
 ```
 
+
+```{r}
+light_reef_44 <- full_join(light_reef_44_2014,light_reef_44_2015)
+light_reef_42 <- full_join(light_reef_42_2014,light_reef_42_2015)
+light_reef_himb <- full_join(light_reef_himb_2014,light_reef_himb_2015)
+```
