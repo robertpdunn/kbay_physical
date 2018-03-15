@@ -1,0 +1,41 @@
+---
+title: "fix_nutrients"
+author: "Ken"
+date: "14 March 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+Set up the packages
+```{r}
+library(tidyverse) #install.packages("tidyverse")
+library(stringr)
+library(janitor)
+```
+Load the data
+```{r}
+nutrients_raw <- read.csv("https://raw.githubusercontent.com/robertpdunn/kbay_physical/master/data/nutrient_data.csv")
+head(nutrients_raw)
+```
+
+Make a column for reef and fix the dates
+```{r}
+nutrients <- clean_names(nutrients_raw)
+nutrients <- nutrients %>%
+  mutate(reef= str_c("reef_",str_to_lower(site))) %>%
+  mutate("year_month"=floor_date(as.Date(nutrients$date,'%m/%d/%y'),unit="month"))
+head(nutrients)
+```
+Find means for each month
+```{r}
+nutrients_monthly <- nutrients %>% 
+  group_by(reef, year_month) %>%
+  summarise(phosphate_mean=mean(phosphate),silicate_mean=mean(silicate),n_n_mean=mean(n_n),ammonia_mean=mean(ammonia,na.rm=TRUE),total_n_mean=mean(total_n,na.rm=TRUE)) %>% 
+  ungroup() 
+```
+save the file
+```{r}
+write_csv(nutrients_monthly,"data_tidy/nutrients_monthly")
+```
