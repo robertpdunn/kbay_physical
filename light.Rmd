@@ -9,6 +9,7 @@ output: html_document
 ```{r setup, echo = TRUE, message = FALSE, warning = FALSE}
 library(tidyverse)
 library(lubridate) # package for date manipulation
+library(tibbletime) 
 ```
 
 Load 7 light (PAR) datasets from Reef 25, 42, 44 and HIMB in Kaneohe Bay between 2014-2015
@@ -74,6 +75,20 @@ head(dli_monthly)
 Write data frame to .csv file
 ```{r}
 write_csv(dli_monthly, "data_tidy/dli_monthly.csv", na = "NA", append = FALSE)
+```
+
+## Plot daily light across all reefs
+```{r, plot, message = FALSE, warning = FALSE}
+
+rolling_mean <- rollify(mean, window = 7) # 7-day rolling mean of dli data
+
+light_dli %>%
+  mutate(mean_7 = rolling_mean(dli)) %>%
+  group_by(reef) %>%
+  ggplot(aes(x = date)) +
+  geom_line(alpha = .3, aes(y = dli, color = reef)) +
+  geom_line(size = 1, aes(y = mean_7, color = reef)) +
+  labs(title = "Daily Light (7 day rolling mean)", x = "Date", y = "DLI (mol m-2 d-1)")
 ```
 
 Cheryl's notes for tomorrow about how to summarize light and temp: Average daily range, monthly mean, monthly max, monthly min, DHW, DHM
