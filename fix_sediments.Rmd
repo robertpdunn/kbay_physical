@@ -33,17 +33,21 @@ head(sediments_raw)
 
 Make a column for reef and fix the dates
 ```{r}
+
+## cleaned headers and reef record names
 sediments <- clean_names(sediments_raw)
 sediments <- sediments %>%
-  mutate(reef= str_c("reef_",str_to_lower(site))) %>%
+  mutate(reef = gsub("reef", "reef_", site)) %>%
+  mutate(reef = gsub("HIMB", "reef_himb", reef))
+## deal with dates
+sediments <- sediments %>%  
   mutate("year_month"=floor_date(as.Date(sediments$date,'%m/%d/%y'),unit="month"))
-head(sediments)
 ```
 Find means for each month
 ```{r}
 sediments_monthly <- sediments %>% 
   group_by(reef, year_month) %>%
-  summarise(phosphate_mean=mean(phosphate),silicate_mean=mean(silicate),n_n_mean=mean(n_n),ammonia_mean=mean(ammonia,na.rm=TRUE),total_n_mean=mean(total_n,na.rm=TRUE)) %>% 
+  summarise(sediment_mean_grams_per_day=mean(sediment_grams_per_day)) %>% 
   ungroup() 
 ```
 save the file
