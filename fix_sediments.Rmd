@@ -39,9 +39,14 @@ sediments <- clean_names(sediments_raw)
 sediments <- sediments %>%
   mutate(reef = gsub("reef", "reef_", site)) %>%
   mutate(reef = gsub("HIMB", "reef_himb", reef))
-## deal with dates
-sediments <- sediments %>%  
-  mutate("year_month"=floor_date(as.Date(sediments$date,'%m/%d/%y'),unit="month"))
+## select and order columns
+sediments <- sediments %>%
+  select(.data$reef, .data$date, .data$sediment_grams_per_day)
+head(sediments)
+## assign dates to first of each month to align with other streamlined datasets
+# sediments <- sediments %>%  
+#   mutate("year_month"=floor_date(as.Date(sediments$date,'%m/%d/%y'),unit="month"))
+
 ```
 Find means for each month
 ```{r}
