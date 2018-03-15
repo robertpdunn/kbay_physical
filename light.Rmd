@@ -76,6 +76,9 @@ Write data frame to .csv file
 write_csv(dli_monthly, "data_tidy/dli_monthly.csv", na = "NA", append = FALSE)
 ```
 
+
+%>%
+
 Cheryl's notes for tomorrow about how to summarize light and temp: Average daily range, monthly mean, monthly max, monthly min, DHW, DHM
 
 
