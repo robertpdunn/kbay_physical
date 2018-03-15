@@ -37,5 +37,5 @@ nutrients_monthly <- nutrients %>%
 ```
 save the file
 ```{r}
-write_csv(nutrients_monthly,"data_tidy/nutrients_monthly")
+write_csv(nutrients_monthly,"data_tidy/nutrients_monthly.csv")
 ```
