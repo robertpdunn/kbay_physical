@@ -53,7 +53,7 @@ light_dli <- light_all %>%
 
 head(light_dli)
 ```
-Create monthly light product
+## Create monthly light product
 ```{r create monthly product}
 dli_monthly <- light_dli %>%
   group_by(reef, month = month(date), year = year(date)) %>%

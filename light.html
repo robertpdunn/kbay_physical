@@ -168,7 +168,9 @@ head(light_dli)</code></pre>
 ## 4 reef_25 2015-04-18 21.9 
 ## 5 reef_25 2015-04-19 15.0 
 ## 6 reef_25 2015-04-20  6.34</code></pre>
-<p>Create monthly light product</p>
+</div>
+<div id="create-monthly-light-product" class="section level2">
+<h2>Create monthly light product</h2>
 <pre class="r"><code>dli_monthly &lt;- light_dli %&gt;%
   group_by(reef, month = month(date), year = year(date)) %&gt;%
   summarise(dli_month_mean = mean(dli), 
