@@ -58,12 +58,15 @@ coral_health_monthly <- data_tidy %>%
 
 head(coral_health_monthly)
 
-
+write_csv(coral_health_monthly,"data_tidy/coral_health_monthly.csv")
 ```
 
 
+#Try some test visualizations
 
 ```{r }
+head(coral_health_monthly,20)
+plot(health_score_mean ~ year_month, coral_health_monthly)
 
 
 ```
