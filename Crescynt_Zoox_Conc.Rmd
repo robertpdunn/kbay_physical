@@ -42,8 +42,13 @@ zoox_monthly <- zoox_min %>%
 
 ```
 
+## Average zoox data by month
+*also needed to reformat zoox concentration to numeric*
 ```{r}
-
+zoox_mean_monthly <- zoox_monthly %>% 
+  group_by(reef, year_month) %>%
+  summarise(clade_c_mean=mean(as.numeric(clade_c)), clade_d_mean=mean(as.numeric(clade_d)),total_zoox_mean=mean(as.numeric(total_zoox))) %>% 
+  ungroup() 
 ```
 
 
