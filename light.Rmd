@@ -55,7 +55,7 @@ head(light_dli)
 Create monthly light product
 ```{r}
 dli_monthly <- light_dli %>%
-  group_by(month = month(date), year = year(date)) %>%
+  group_by(reef, month = month(date), year = year(date)) %>%
   summarise(dli_month_mean = mean(dli), 
             dli_month_min = min(dli), 
             dli_month_max = max(dli),
@@ -63,7 +63,7 @@ dli_monthly <- light_dli %>%
   ungroup() %>%
   mutate(date = as.Date(paste(year, month, "01", sep = "-"), 
                         format = "%Y-%m-%d")) %>%   # add correct date format
-  select(date,                   # select and reorder columns
+  select(date, reef,                   # select and reorder columns
          dli_month_mean, 
          dli_month_min, 
          dli_month_max, 
