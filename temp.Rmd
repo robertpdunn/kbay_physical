@@ -20,11 +20,19 @@ reef25_2015 <- read_csv("https://zenodo.org/record/46366/files/temp_reef25_2015.
   mutate(temp = temp_raw_C) %>% 
   select(date, time, temp)
 
+reef25_2016 <- read_csv("data/temp_rf25_2016.csv") %>%
+  mutate(temp = temp_cal_C) %>% 
+  select(date, time, temp)
+
 reef42_2014 <- read_csv("https://zenodo.org/record/46366/files/temp_reef42_2014.csv") %>%
   mutate(temp = temp_raw_C) %>% 
   select(date, time, temp)
 
 reef42_2015 <- read_csv("https://zenodo.org/record/46366/files/temp_reef42_2015.csv") %>%
+  mutate(temp = temp_raw_C) %>% 
+  select(date, time, temp)
+
+reef42_2016 <- read_csv("data/temp_rf42_2016.csv") %>%
   mutate(temp = temp_raw_C) %>% 
   select(date, time, temp)
 
@@ -36,6 +44,10 @@ reef44_2015 <- read_csv("https://zenodo.org/record/46366/files/temp_reef44_2015.
   mutate(temp = temp_cal_C) %>% 
   select(date, time, temp)
 
+reef44_2016 <- read_csv("data/temp_rf44_2016.csv") %>%
+  mutate(temp = temp_cal_C) %>% 
+  select(date, time, temp)
+
 reefHIMB_2014 <- read_csv("https://zenodo.org/record/46366/files/temp_reefHIMB_2014.csv") %>%
   mutate(temp = temp_cal_C) %>% 
   select(date, time, temp)
@@ -43,15 +55,31 @@ reefHIMB_2014 <- read_csv("https://zenodo.org/record/46366/files/temp_reefHIMB_2
 reefHIMB_2015 <- read_csv("https://zenodo.org/record/46366/files/temp_reefHIMB_2015.csv") %>%
   mutate(temp = temp_cal_C) %>% 
   select(date, time, temp)
+
+reefHIMB_2016 <- read_csv("data/temp_rfHIMB_2016.csv") %>%
+  mutate(temp = temp_cal_C) %>% 
+  select(date, time, temp)
 ```
 
 ```{r combine_temp_data}
-reef25 <- bind_rows(reef25_2014, reef25_2015) %>% mutate(reef = "reef_25")
-reef44 <- bind_rows(reef44_2014, reef44_2015) %>% mutate(reef = "reef_44")
-reef42 <- bind_rows(reef42_2014, reef42_2015) %>% mutate(reef = "reef_42")
-reefHIMB <- bind_rows(reefHIMB_2014, reefHIMB_2015) %>% mutate(reef = "reef_himb")
+reef25 <- bind_rows(reef25_2014, reef25_2015, reef25_2016) %>% mutate(reef = "reef_25")
+reef44 <- bind_rows(reef44_2014, reef44_2015, reef44_2016) %>% mutate(reef = "reef_44")
+reef42 <- bind_rows(reef42_2014, reef42_2015, reef42_2016) %>% mutate(reef = "reef_42")
+reefHIMB <- bind_rows(reefHIMB_2014, reefHIMB_2015, reefHIMB_2016) %>% mutate(reef = "reef_himb")
 
 temp_data <- bind_rows(reef25, reef44, reef42, reefHIMB)
+temp_data$date <- as.Date(temp_data$date, format="%m/%d/%Y")  # Reformat date and convert to date class
 temp_data
+```
+
+```{r daily_temp_metrics}
+temp_daily <- temp_data %>%
+  group_by(reef, date) %>%
+  summarise(temp_mean = mean(temp),
+            temp_max = max(temp),
+            temp_min = min(temp),
+            temp_var = var(temp))
+
+temp_daily
 ```
 
