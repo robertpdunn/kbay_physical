@@ -51,6 +51,17 @@ light_dli <- light_all %>%
 
 head(light_dli)
 ```
+Create monthly light product
+```{r}
+dli_monthly_mean <- light_dli %>%
+  mutate(month = format(date, "%m"), year = format(date, "%Y")) %>%
+  group_by(month, year) %>%
+  summarize(dli_monthly_mean = mean(dli)) %>% # remove na's and convert units  
+  ungroup()
+
+head(dli_monthly_mean)
+```
+
 Cheryl's notes for tomorrow about how to summarize light and temp: Average daily range, monthly mean, monthly max, monthly min, DHW, DHM
 
 Use date format of: YYYY-MM-01
