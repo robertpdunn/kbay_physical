@@ -10,7 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 Set up the packages
 ```{r}
-library(tidyverse)
+library(tidyverse) #install.packages("tidyverse")
 library(stringr)
 library(janitor)
 ```
@@ -37,5 +37,5 @@ nutrients_monthly <- nutrients %>%
 ```
 save the file
 ```{r}
-write_csv(nutrients_monthly,"data_tidy/nutrients_monthly.csv")
+write_csv(nutrients_monthly,"data_tidy/nutrients_monthly")
 ```

@@ -16,7 +16,7 @@ library(lubridate)
 ## Import the csv file
 ```{r, results='hide'}
 
-zoox <- read.csv("https://raw.githubusercontent.com/robertpdunn/kbay_physical/master/data/bleaching_symbionts.csv")
+zoox <- read.csv("https://raw.githubusercontent.com/robertpdunn/kbay_physical/master/data_raw/bleaching_symbionts.csv")
 head(zoox)
 
 ```
@@ -42,10 +42,18 @@ zoox_monthly <- zoox_min %>%
 
 ```
 
+## Average zoox data by month
+*also needed to reformat zoox concentration to numeric*
 ```{r}
-
+zoox_mean_monthly <- zoox_monthly %>% 
+  group_by(reef, year_month) %>%
+  summarise(clade_c_mean=mean(as.numeric(clade_c)), clade_d_mean=mean(as.numeric(clade_d)),total_zoox_mean=mean(as.numeric(total_zoox))) %>% 
+  ungroup() 
 ```
 
+```{r}
+write.csv(zoox_mean_monthly, file = "data_tidy/zoox_mean_monthly.csv", row.names = FALSE)
+```
 
 
 
