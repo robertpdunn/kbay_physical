@@ -14,50 +14,58 @@ library(lubridate)
 
 ```{r read_temp_data}
 reef25_2014 <- read_csv("https://zenodo.org/record/46366/files/temp_reef25_2014.csv") %>%
-  mutate(temp = temp_raw_C) %>% 
+  mutate(temp = temp_raw_C,
+         date = as.Date(date, format="%m/%d/%Y")) %>%  # Reformat date and convert to date class 
   select(date, time, temp)
 
 reef25_2015 <- read_csv("https://zenodo.org/record/46366/files/temp_reef25_2015.csv") %>%
-  mutate(temp = temp_raw_C) %>% 
+  mutate(temp = temp_raw_C,
+         date = as.Date(date, format="%m/%d/%Y")) %>% 
   select(date, time, temp)
 
-reef25_2016 <- read_csv("data/temp_rf25_2016.csv") %>%
+reef25_2016 <- read_csv("data_raw/temp_rf25_2016.csv") %>%
   mutate(temp = temp_cal_C) %>% 
   select(date, time, temp)
 
 reef42_2014 <- read_csv("https://zenodo.org/record/46366/files/temp_reef42_2014.csv") %>%
-  mutate(temp = temp_raw_C) %>% 
+  mutate(temp = temp_raw_C,
+         date = as.Date(date, format="%m/%d/%Y")) %>% 
   select(date, time, temp)
 
 reef42_2015 <- read_csv("https://zenodo.org/record/46366/files/temp_reef42_2015.csv") %>%
-  mutate(temp = temp_raw_C) %>% 
+  mutate(temp = temp_raw_C,
+         date = as.Date(date, format="%m/%d/%Y")) %>% 
   select(date, time, temp)
 
-reef42_2016 <- read_csv("data/temp_rf42_2016.csv") %>%
+reef42_2016 <- read_csv("data_raw/temp_rf42_2016.csv") %>%
   mutate(temp = temp_raw_C) %>% 
   select(date, time, temp)
 
 reef44_2014 <- read_csv("https://zenodo.org/record/46366/files/temp_reef44_2014.csv") %>%
-  mutate(temp = temp_cal_C) %>% 
+  mutate(temp = temp_cal_C,
+         date = as.Date(date, format="%m/%d/%Y")) %>% 
   select(date, time, temp)
 
 reef44_2015 <- read_csv("https://zenodo.org/record/46366/files/temp_reef44_2015.csv") %>%
-  mutate(temp = temp_cal_C) %>% 
+  mutate(temp = temp_cal_C,
+         date = as.Date(date, format="%m/%d/%Y")) %>% 
   select(date, time, temp)
 
-reef44_2016 <- read_csv("data/temp_rf44_2016.csv") %>%
+reef44_2016 <- read_csv("data_raw/temp_rf44_2016.csv") %>%
   mutate(temp = temp_cal_C) %>% 
   select(date, time, temp)
 
 reefHIMB_2014 <- read_csv("https://zenodo.org/record/46366/files/temp_reefHIMB_2014.csv") %>%
-  mutate(temp = temp_cal_C) %>% 
+  mutate(temp = temp_cal_C,
+         date = as.Date(date, format="%m/%d/%Y")) %>% 
   select(date, time, temp)
 
 reefHIMB_2015 <- read_csv("https://zenodo.org/record/46366/files/temp_reefHIMB_2015.csv") %>%
-  mutate(temp = temp_cal_C) %>% 
+  mutate(temp = temp_cal_C,
+         date = as.Date(date, format="%m/%d/%Y")) %>% 
   select(date, time, temp)
 
-reefHIMB_2016 <- read_csv("data/temp_rfHIMB_2016.csv") %>%
+reefHIMB_2016 <- read_csv("data_raw/temp_rfHIMB_2016.csv") %>%
   mutate(temp = temp_cal_C) %>% 
   select(date, time, temp)
 ```
