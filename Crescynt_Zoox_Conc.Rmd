@@ -67,6 +67,13 @@ zoox_mean_monthly <- zoox_monthly %>%
 write.csv(zoox_mean_monthly, file = "data_tidy/zoox_mean_monthly.csv", row.names = FALSE)
 ```
 
+First attempt at a plot
+
+```{r}
+zoox_mean_monthly <- read_csv("data_tidy/zoox_mean_monthly.csv")
+
+ggplot(data = zoox_mean_monthly, aes(x=year_month, y = total_zoox_mean, color = bleached, shape = reef)) + geom_point(size = 3)
+```
 
 
 
