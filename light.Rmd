@@ -78,7 +78,7 @@ write_csv(dli_monthly, "data_tidy/dli_monthly.csv", na = "NA", append = FALSE)
 ```
 
 ## Plot daily light across all reefs
-```{r, plot}
+```{r, plot, message = FALSE, warning = FALSE}
 
 rolling_mean <- rollify(mean, window = 7) # 7-day rolling mean of dli data
 
