@@ -27,38 +27,36 @@ data_tidy<- data_tidy %>%
                                                                               #'colony' outside the gather
 
 head(data_tidy, 10)
-colnames(data_tidy)<-c("reef", "species", "colony", "date", "health_score")
+colnames(data_tidy)<-c("reef", "species", "colony", "date", "health_score") #fix column names
 head(data_tidy,10)
 
-data_tidy$date<-gsub("x", "", data_tidy$date)
+data_tidy$date<-gsub("x", "", data_tidy$date)  #remove x's 
 head(data_tidy, 10)
-data_tidy$reef<-gsub("HIMB","himb",data_tidy$reef)
+data_tidy$reef<-gsub("HIMB","himb",data_tidy$reef) #change HIMB to himb
 
 data_tidy<- data_tidy %>%
-  mutate(health_score=str_replace(health_score,"missing-rolled down the hill","NA"))
+  mutate(health_score=str_replace(health_score,"missing-rolled down the hill","NA"))  #remove random string
 
-data_tidy$reef<- sub("^","reef_", data_tidy$reef)
+data_tidy$reef<- sub("^","reef_", data_tidy$reef)  #add reef_ in front of all reef names
 head(data_tidy)
-unique(data_tidy$reef)
+unique(data_tidy$reef) #check that it worked
 
 data_tidy<- data_tidy %>%
-  mutate("year_month"=floor_date(as.Date(data_tidy$date,'%m_%d_%Y'),unit="month"))
+  mutate("year_month"=floor_date(as.Date(data_tidy$date,'%m_%d_%Y'),unit="month")) #fix month formats
 head(data_tidy)
-data_tidy$health_score<-as.integer(data_tidy$health_score)
+data_tidy$health_score<-as.integer(data_tidy$health_score)  #change health scores to integers
 str(data_tidy)
 head(data_tidy)
  
-###still need to####
-#calculate average monthly value of health score?
-
+#now take the average monthly health score across colonies 
 coral_health_monthly <- data_tidy %>% 
   group_by(reef, species, year_month) %>%
-  summarise(health_score_mean=mean(health_score)) %>% 
+  summarise(health_score_mean=mean(health_score,na.rm=T)) %>% 
   ungroup() 
 
 head(coral_health_monthly)
 
-write_csv(coral_health_monthly,"data_tidy/coral_health_monthly.csv")
+write_csv(coral_health_monthly,"data_tidy/coral_health_monthly.csv")  #output clean csv
 ```
 
 
@@ -66,8 +64,11 @@ write_csv(coral_health_monthly,"data_tidy/coral_health_monthly.csv")
 
 ```{r }
 head(coral_health_monthly,20)
-plot(health_score_mean ~ year_month, coral_health_monthly)
+plot(health_score_mean ~ year_month, coral_health_monthly) #base plot
 
+bleaching_plot<- ggplot(coral_health_monthly, aes(x=year_month, y=health_score_mean, color=species)) + 
+  geom_point()
+bleaching_plot + facet_wrap(~reef)+ theme_bw()
 
 ```
 
