@@ -1,0 +1,68 @@
+---
+title: "Symbionts_reef44"
+author: "Cheryl"
+date: "3/14/2018"
+output: html_document
+---
+
+## Load libraries and data from reef 44
+
+```{r setup, echo = FALSE, message = FALSE, warning = FALSE}
+## libraries
+library(tidyverse)
+
+## data
+symbionts <- read_csv("/Users/loga8761/github/crescynt-repo/bleaching_symbionts.csv")
+```
+
+```{r explore, echo=FALSE, eval=FALSE}
+sort(unique(symbionts$colony)) # view unique colony IDs
+```
+
+## Subset data from Reef 44 only
+```{r, results='hide'}
+sym_dom <- symbionts %>%
+  dplyr::filter(reef == 44) %>% # get data from reef 44
+  dplyr::select(colony, date, days, vis, propD, score) # select columns of interest
+
+head(sym_dom)
+```
+
+```{r wrangling, echo=FALSE}
+# ## both on same plot, colored by `vis`
+# sym_dom %>%
+#   # dplyr::group_by(vis) %>% # not needed
+#   ggplot(aes(x = days, y = propD, color = vis)) +
+#   geom_point()
+
+## 2 subplots of pairs, colored by colony
+sym_dom_graph <- sym_dom %>%
+  filter(!is.na(vis)) %>%
+  mutate(bleaching = as.character(score)) %>%
+  mutate(bleaching = str_replace_all(bleaching, "1", "bad"),
+         bleaching = str_replace_all(bleaching, "2", "moderate"),
+         bleaching = str_replace_all(bleaching, "3", "none"))
+  # filter(!is.na(score)) %>%
+```
+
+## Plot
+
+```{r plot, echo=FALSE}
+sym_dom_graph %>% 
+  dplyr::filter(vis == "bleached") %>% 
+  ggplot(aes(x = date, y = propD, color = bleaching)) +
+  geom_point() + 
+  facet_wrap( ~ colony, nrow = 2) +
+  theme(axis.text.x = element_text(angle = 90)) + # rotate x-axis labels 90 degrees
+  labs(title = "Originally Bleached Montipora", x = "Days", y = "Proportation of Clade D Symbionts")
+
+sym_dom_graph %>% 
+  dplyr::filter(vis == "not bleached") %>% 
+  ggplot(aes(x = date, y = propD, color = bleaching)) +
+  geom_point() +
+  facet_wrap( ~ colony, nrow = 2) +
+  theme(axis.text.x = element_text(angle = 90)) + # rotate x-axis labels 90 degrees
+  labs(title = "Originally Not Bleached Montipora", x = "Days", y = "Proportation of Clade D Symbionts")
+
+```
+
