@@ -35,4 +35,7 @@ nutrients_monthly <- nutrients %>%
   summarise(phosphate_mean=mean(phosphate),silicate_mean=mean(silicate),n_n_mean=mean(n_n),ammonia_mean=mean(ammonia,na.rm=TRUE),total_n_mean=mean(total_n,na.rm=TRUE)) %>% 
   ungroup() 
 ```
-
+save the file
+```{r}
+write_csv(nutrients_monthly,"data_tidy/nutrients_monthly")
+```
