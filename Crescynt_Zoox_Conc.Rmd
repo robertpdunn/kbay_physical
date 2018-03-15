@@ -30,6 +30,17 @@ head(zoox)
 zoox_min <- select(zoox, colony, date, reef, C.SH, D.SH, tot.SH, vis, days)
 head(zoox_min)
 ```
+##check that vis doesn't vary within colonies  (apologies for this )
+```{r}
+any(
+  sapply(
+    split(zoox$vis,paste(zoox$reef,zoox$colony)),
+        function(x) length(unique(x[!is.na(x)]))
+        )
+  >1)
+```
+
+
 
 ##Ok, now I want to create a new column that will transform date from a character to date using as.Date and mutate. 
 
@@ -37,16 +48,17 @@ head(zoox_min)
 zoox_monthly <- zoox_min %>% 
   mutate(date_formatted = as.Date(date, "%m/%d/%y")) %>% 
   mutate(year_month = floor_date(date_formatted, "month")) %>%
-  select(colony, year_month, reef, clade_c=C.SH, clade_d=D.SH, total_zoox=tot.SH, vis, days, date_formatted, date)
+  mutate(bleached=ifelse(vis=="bleached",TRUE,FALSE)) %>% 
+  select(colony, year_month, reef, bleached, clade_c=C.SH, clade_d=D.SH, total_zoox=tot.SH, days, date_formatted, date)
 
 
 ```
 
-## Average zoox data by month
+## Average zoox data by month - also split out vis
 *also needed to reformat zoox concentration to numeric*
 ```{r}
 zoox_mean_monthly <- zoox_monthly %>% 
-  group_by(reef, year_month) %>%
+  group_by(reef, year_month,bleached) %>%
   summarise(clade_c_mean=mean(as.numeric(clade_c)), clade_d_mean=mean(as.numeric(clade_d)),total_zoox_mean=mean(as.numeric(total_zoox))) %>% 
   ungroup() 
 ```
