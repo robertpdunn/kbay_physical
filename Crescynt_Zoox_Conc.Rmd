@@ -16,7 +16,7 @@ library(lubridate)
 ## Import the csv file
 ```{r, results='hide'}
 
-zoox <- read.csv("https://raw.githubusercontent.com/robertpdunn/kbay_physical/master/data/bleaching_symbionts.csv")
+zoox <- read.csv("https://raw.githubusercontent.com/robertpdunn/kbay_physical/master/data_raw/bleaching_symbionts.csv")
 head(zoox)
 
 ```
@@ -51,6 +51,9 @@ zoox_mean_monthly <- zoox_monthly %>%
   ungroup() 
 ```
 
+```{r}
+write.csv(zoox_mean_monthly, file = "data_tidy/zoox_mean_monthly.csv", row.names = FALSE)
+```
 
 
 
