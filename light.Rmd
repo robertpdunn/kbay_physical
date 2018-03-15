@@ -1,20 +1,18 @@
 ---
 title: "Light"
-author: "Leslie"
+author: "Leslie & Cheryl"
 date: "March 14, 2018"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-```{r}
+## Load libraries and data
+```{r setup, echo = TRUE, message = FALSE, warning = FALSE}
 library(tidyverse)
 ```
 
-Adding all 7 datasets
+Load 7 light (PAR) datasets from Reef 25, 42, 44 and HIMB in Kaneohe Bay between 2014-2015
 
-```{r}
+```{r load data, message = FALSE, warning = FALSE}
 light_reef_44_2014 <- read_csv("https://www.zenodo.org/record/160214/files/light_reef44_2014.csv")
 light_reef_44_2015 <- read_csv("https://www.zenodo.org/record/160214/files/light_reef44_2015.csv")
 light_reef_25_2015 <- read_csv("https://www.zenodo.org/record/160214/files/light_reef25_2015.csv")
@@ -24,7 +22,8 @@ light_reef_himb_2014 <- read_csv("https://www.zenodo.org/record/160214/files/lig
 light_reef_himb_2015 <- read_csv("https://www.zenodo.org/record/160214/files/light_reefHIMB_2015.csv")
 ```
 
-Adding a column that denotes reef in each dataset
+## Wrangle Data
+Add an identifying column to denote which reef the light data came from
 
 ```{r}
 light_reef_25_2015$reef <- "reef_25"
@@ -36,22 +35,33 @@ light_reef_himb_2014$reef <- "reef_himb"
 light_reef_himb_2015$reef <- "reef_himb"
 ```
 
-creating one dataset 
+Create a single data frame for light data from all 4 reefs
 
 ```{r}
 light_all <- bind_rows(list(light_reef_25_2015,light_reef_42_2014,light_reef_42_2015, light_reef_44_2014, light_reef_44_2015, light_reef_himb_2014, light_reef_himb_2015))
 ```
 
-Get aily light integral (dli). First, group by reef and day, then take the mean of the light each day and convert to mol/m^2/day (multiply by 0.0864). 
+Calculate daily light integral (dli). First, group by reef and day. Second, take the daily mean of light and convert PAR from umol/m^2/s to mol/m^2/day. To do this, multiply by 0.0864. (1 µmol m-2 s-1 = 0.0864 mol m-2 d-1)
 
 ```{r}
 light_dli <- light_all %>%
-  group_by(reef, date) %>%
-  summarize(dli = mean(`PAR_calibrated_umol/m^2/s`*0.0864, na.rm=T)) %>%
+  group_by(reef, date) %>%  # group by reef and day
+  summarize(dli = mean(`PAR_calibrated_umol/m^2/s`*0.0864, na.rm=T)) %>% # remove na's and convert units  
   ungroup()
 
 head(light_dli)
 ```
+Create monthly light product
+```{r}
+dli_monthly_mean <- light_dli %>%
+  mutate(month = format(date, "%m"), year = format(date, "%Y")) %>%
+  group_by(month, year) %>%
+  summarize(dli_monthly_mean = mean(dli)) %>% # remove na's and convert units  
+  ungroup()
+
+head(dli_monthly_mean)
+```
+
 Cheryl's notes for tomorrow about how to summarize light and temp: Average daily range, monthly mean, monthly max, monthly min, DHW, DHM
 
 Use date format of: YYYY-MM-01
