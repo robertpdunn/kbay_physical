@@ -128,7 +128,8 @@ $(document).ready(function () {
 
 <div id="load-libraries-and-data" class="section level2">
 <h2>Load libraries and data</h2>
-<pre class="r"><code>library(tidyverse)</code></pre>
+<pre class="r"><code>library(tidyverse)
+library(lubridate) # package for date manipulation</code></pre>
 <p>Load 7 light (PAR) datasets from Reef 25, 42, 44 and HIMB in Kaneohe Bay between 2014-2015</p>
 <pre class="r"><code>light_reef_44_2014 &lt;- read_csv(&quot;https://www.zenodo.org/record/160214/files/light_reef44_2014.csv&quot;)
 light_reef_44_2015 &lt;- read_csv(&quot;https://www.zenodo.org/record/160214/files/light_reef44_2015.csv&quot;)
@@ -166,6 +167,34 @@ head(light_dli)</code></pre>
 ## 4 reef_25 2015-04-18 21.9 
 ## 5 reef_25 2015-04-19 15.0 
 ## 6 reef_25 2015-04-20  6.34</code></pre>
+<p>Create monthly light product</p>
+<pre class="r"><code>dli_monthly &lt;- light_dli %&gt;%
+  group_by(month = month(date), year = year(date)) %&gt;%
+  summarise(dli_month_mean = mean(dli), 
+            dli_month_min = min(dli), 
+            dli_month_max = max(dli),
+            dli_month_var = var(dli))    %&gt;%
+  ungroup() %&gt;%
+  mutate(date = as.Date(paste(year, month, &quot;01&quot;, sep = &quot;-&quot;), 
+                        format = &quot;%Y-%m-%d&quot;)) %&gt;%   # add correct date format
+  select(date,                   # select and reorder columns
+         dli_month_mean, 
+         dli_month_min, 
+         dli_month_max, 
+         dli_month_var) 
+
+head(dli_monthly)</code></pre>
+<pre><code>## # A tibble: 6 x 5
+##   date       dli_month_mean dli_month_min dli_month_max dli_month_var
+##   &lt;date&gt;              &lt;dbl&gt;         &lt;dbl&gt;         &lt;dbl&gt;         &lt;dbl&gt;
+## 1 2015-01-01           13.8          3.93          24.4          21.5
+## 2 2015-02-01           14.8          2.63          29.3          30.7
+## 3 2015-03-01           19.6          5.48          35.8          44.0
+## 4 2015-04-01           22.6          4.28          39.6          41.3
+## 5 2015-05-01           20.1          3.72          31.8          39.1
+## 6 2015-06-01           24.0          9.00          37.0          46.3</code></pre>
+<p>Write data frame to .csv file</p>
+<pre class="r"><code>write_csv(dli_monthly, &quot;/Users/loga8761/github/kbay_physical/dli_monthly.csv&quot;, na = &quot;NA&quot;, append = FALSE)</code></pre>
 <p>Cheryl’s notes for tomorrow about how to summarize light and temp: Average daily range, monthly mean, monthly max, monthly min, DHW, DHM</p>
 <p>Use date format of: YYYY-MM-01</p>
 </div>

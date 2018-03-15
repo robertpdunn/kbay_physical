@@ -8,6 +8,7 @@ output: html_document
 ## Load libraries and data
 ```{r setup, echo = TRUE, message = FALSE, warning = FALSE}
 library(tidyverse)
+library(lubridate) # package for date manipulation
 ```
 
 Load 7 light (PAR) datasets from Reef 25, 42, 44 and HIMB in Kaneohe Bay between 2014-2015
@@ -53,13 +54,26 @@ head(light_dli)
 ```
 Create monthly light product
 ```{r}
-dli_monthly_mean <- light_dli %>%
-  mutate(month = format(date, "%m"), year = format(date, "%Y")) %>%
-  group_by(month, year) %>%
-  summarize(dli_monthly_mean = mean(dli)) %>% # remove na's and convert units  
-  ungroup()
+dli_monthly <- light_dli %>%
+  group_by(month = month(date), year = year(date)) %>%
+  summarise(dli_month_mean = mean(dli), 
+            dli_month_min = min(dli), 
+            dli_month_max = max(dli),
+            dli_month_var = var(dli))    %>%
+  ungroup() %>%
+  mutate(date = as.Date(paste(year, month, "01", sep = "-"), 
+                        format = "%Y-%m-%d")) %>%   # add correct date format
+  select(date,                   # select and reorder columns
+         dli_month_mean, 
+         dli_month_min, 
+         dli_month_max, 
+         dli_month_var) 
 
-head(dli_monthly_mean)
+head(dli_monthly)
+```
+Write data frame to .csv file
+```{r}
+write_csv(dli_monthly, "/Users/loga8761/github/kbay_physical/dli_monthly.csv", na = "NA", append = FALSE)
 ```
 
 Cheryl's notes for tomorrow about how to summarize light and temp: Average daily range, monthly mean, monthly max, monthly min, DHW, DHM
