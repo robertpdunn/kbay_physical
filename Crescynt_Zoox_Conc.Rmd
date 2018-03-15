@@ -5,29 +5,22 @@ date: "March 14, 2018"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+## Libraries
+
+```{r setup, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(dplyr)
+library(lubridate)
 ```
 
-##First let's insert the csv file
-```{r}
+## Import the csv file
+```{r, results='hide'}
 
 zoox <- read.csv("https://raw.githubusercontent.com/robertpdunn/kbay_physical/master/data/bleaching_symbionts.csv")
 head(zoox)
 
 ```
 
-##Now let's open the tidyverse library
-
-```{r}
-library(tidyverse)
-```
-
-###and the dplyr library
-
-```{r}
-library(dplyr)
-```
 
 ##Now remove unused columns
 
@@ -41,13 +34,15 @@ head(zoox_min)
 ##Ok, now I want to create a new column that will transform date from a character to date using as.Date and mutate. 
 
 ```{r}
-zoox_min %>% mutate(date_floor = as.Date(date, "%m/%d/%y"))
+zoox_monthly <- zoox_min %>% 
+  mutate(date_formatted = as.Date(date, "%m/%d/%y")) %>% 
+  mutate(year_month = floor_date(date_formatted, "month")) %>%
+  select(colony, year_month, reef, clade_c=C.SH, clade_d=D.SH, total_zoox=tot.SH, vis, days, date_formatted, date)
+
+
 ```
 
-#Now that we have a date column in *date* format, we want to consolidate by month. We'll try this with tibbletime
-
 ```{r}
-library(tibbletime) #install.packages("tibbletime")
 
 ```
 
