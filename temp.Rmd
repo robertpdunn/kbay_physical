@@ -92,14 +92,14 @@ temp_daily <- temp_data %>%
 temp_daily
 
 temp_monthly <- temp_daily %>%
-  group_by(month = month(date), year = year(date)) %>%
+  group_by(reef, month = month(date), year = year(date)) %>%
   summarise(temp_mean_daily_mean = mean(temp_mean),
             temp_mean_daily_max = mean(temp_mean),
             temp_mean_daily_min = mean(temp_min),
             temp_mean_daily_var = mean(temp_var)) %>%
   ungroup() %>%
   mutate(date = as.Date(paste(year, month, "01", sep="-"), format="%Y-%m-%d")) %>%
-  select(date, temp_mean_daily_mean, temp_mean_daily_min, temp_mean_daily_max, temp_mean_daily_var)
+  select(date, reef, temp_mean_daily_mean, temp_mean_daily_min, temp_mean_daily_max, temp_mean_daily_var)
 
 temp_monthly
 
