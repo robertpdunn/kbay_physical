@@ -94,5 +94,8 @@ temp_monthly <- temp_daily %>%
   select(date, temp_mean_daily_mean, temp_mean_daily_min, temp_mean_daily_max, temp_mean_daily_var)
 
 temp_monthly
+
+# Write tidy temperature data to file
+write_csv(temp_monthly, path = "data_tidy/temp_monthly.csv")
 ```
 
