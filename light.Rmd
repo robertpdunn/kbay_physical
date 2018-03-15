@@ -80,7 +80,7 @@ write_csv(dli_monthly, "data_tidy/dli_monthly.csv", na = "NA", append = FALSE)
 ## Plot daily light across all reefs
 ```{r, plot}
 
-rolling_mean <- rollify(mean, window = 7) 
+rolling_mean <- rollify(mean, window = 7) # 7-day rolling mean of dli data
 
 light_dli %>%
   mutate(mean_7 = rolling_mean(dli)) %>%
@@ -88,11 +88,10 @@ light_dli %>%
   ggplot(aes(x = date)) +
   geom_line(alpha = .3, aes(y = dli, color = reef)) +
   geom_line(size = 1, aes(y = mean_7, color = reef)) +
-  labs(title = "Daily Light", x = "Date", y = "DLI (mol m-2 d-1)")
+  labs(title = "Daily Light (7 day rolling mean)", x = "Date", y = "DLI (mol m-2 d-1)")
 ```
 
 Cheryl's notes for tomorrow about how to summarize light and temp: Average daily range, monthly mean, monthly max, monthly min, DHW, DHM
 
-rolling_mean <- rollify(dli, window = 5)
 
 
