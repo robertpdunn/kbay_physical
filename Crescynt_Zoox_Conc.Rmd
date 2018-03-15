@@ -7,14 +7,14 @@ output: html_document
 
 ## Libraries
 
-```{r setup}
+```{r setup, message=FALSE, warning=FALSE}
 library(tidyverse)
 library(dplyr)
 library(lubridate)
 ```
 
 ## Import the csv file
-```{r}
+```{r, results='hide'}
 
 zoox <- read.csv("https://raw.githubusercontent.com/robertpdunn/kbay_physical/master/data/bleaching_symbionts.csv")
 head(zoox)
