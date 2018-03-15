@@ -66,9 +66,16 @@ write_csv(coral_health_monthly,"data_tidy/coral_health_monthly.csv")  #output cl
 head(coral_health_monthly,20)
 plot(health_score_mean ~ year_month, coral_health_monthly) #base plot
 
-bleaching_plot<- ggplot(coral_health_monthly, aes(x=year_month, y=health_score_mean, color=species)) + 
+recovery_plot<- ggplot(coral_health_monthly, aes(x=year_month, y=health_score_mean, color=species)) + 
   geom_point()
-bleaching_plot + facet_wrap(~reef)+ theme_bw()
+recovery_plot + facet_wrap(~reef)+ theme_bw()
 
+```
+
+Now facet across species, plotting reefs in diff. color
+```{r}
+recovery_plot2<- ggplot(coral_health_monthly, aes(x=year_month, y=health_score_mean, color=reef)) + 
+  geom_point()
+recovery_plot2 + facet_wrap(~species)+ theme_bw()
 ```
 
