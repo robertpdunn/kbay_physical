@@ -52,5 +52,8 @@ light_dli <- light_all %>%
 
 head(light_dli)
 ```
+Cheryl's notes for tomorrow about how to summarize light and temp: Average daily range, monthly mean, monthly max, monthly min, DHW, DHM
+
+Use date format of: YYYY-MM-01
 
 
