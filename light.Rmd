@@ -42,5 +42,15 @@ creating one dataset
 light_all <- bind_rows(list(light_reef_25_2015,light_reef_42_2014,light_reef_42_2015, light_reef_44_2014, light_reef_44_2015, light_reef_himb_2014, light_reef_himb_2015))
 ```
 
+Get aily light integral (dli). First, group by reef and day, then take the mean of the light each day and convert to mol/m^2/day (multiply by 0.0864). 
+
+```{r}
+light_dli <- light_all %>%
+  group_by(reef, date) %>%
+  summarize(dli = mean(`PAR_calibrated_umol/m^2/s`*0.0864, na.rm=T)) %>%
+  ungroup()
+
+head(light_dli)
+```
 
 
