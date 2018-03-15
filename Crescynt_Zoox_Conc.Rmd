@@ -16,9 +16,18 @@ library(lubridate)
 ## Import the csv file
 ```{r, results='hide'}
 
-zoox <- read.csv("https://raw.githubusercontent.com/robertpdunn/kbay_physical/master/data_raw/bleaching_symbionts.csv")
+zoox <- read_csv("~/Downloads/bleaching_symbionts.csv")
 head(zoox)
 
+```
+Rename reef identifiers
+
+```{r}
+zoox$reef <- gsub("HIMB", "reef_himb", zoox$reef) 
+zoox$reef <- gsub("44", "reef_44", zoox$reef)
+zoox$reef <- gsub("42", "reef_42", zoox$reef)
+zoox$reef <- gsub("25", "reef_25", zoox$reef)
+head(zoox)
 ```
 
 
@@ -46,27 +55,41 @@ any(
 
 ```{r}
 zoox_monthly <- zoox_min %>% 
-  mutate(date_formatted = as.Date(date, "%m/%d/%y")) %>% 
-  mutate(year_month = floor_date(date_formatted, "month")) %>%
-  mutate(bleached=ifelse(vis=="bleached",TRUE,FALSE)) %>% 
-  select(colony, year_month, reef, bleached, clade_c=C.SH, clade_d=D.SH, total_zoox=tot.SH, days, date_formatted, date)
+  mutate(year_month = floor_date(date, "month")) %>%
+  mutate(bleached=ifelse(vis=="bleached",TRUE,FALSE)) %>%
+  select(colony, year_month, reef, bleached, clade_c=C.SH, clade_d=D.SH, total_zoox=tot.SH, days, date)
+
+
+ 
 
 
 ```
+Need to log transform the data
 
-## Average zoox data by month - also split out vis
+```{r}
+zoox_trans <- zoox_monthly %>% 
+  mutate(clade_c_log = log(clade_c)) %>%
+  mutate(clade_d_log = log(clade_d)) %>%
+  mutate(total_zoox_log = log(total_zoox))
+```
+
+## Average transformed zoox data by date - also split out vis
 *also needed to reformat zoox concentration to numeric*
 ```{r}
-zoox_mean_monthly <- zoox_monthly %>% 
-  group_by(reef, year_month,bleached) %>%
-  summarise(clade_c_mean=mean(as.numeric(clade_c)), clade_d_mean=mean(as.numeric(clade_d)),total_zoox_mean=mean(as.numeric(total_zoox))) %>% 
-  ungroup() 
+zoox_mean_monthly <- zoox_trans %>% 
+  group_by(reef, date, bleached) %>%
+  summarise(total_zoox_mean=mean(total_zoox_log)) %>% ungroup() 
 ```
 
 ```{r}
-write.csv(zoox_mean_monthly, file = "data_tidy/zoox_mean_monthly.csv", row.names = FALSE)
+write.csv(zoox_mean_monthly, file = "data_tidy/total_zoox_mean.csv", row.names = FALSE)
 ```
 
+First attempt at a plot
+
+```{r}
+ggplot(data = zoox_mean_monthly, aes(x=date, y = total_zoox_mean, color = bleached, shape = reef)) + geom_point(size = 3)
+```
 
 
 
