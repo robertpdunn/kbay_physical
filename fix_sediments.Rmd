@@ -1,7 +1,7 @@
 ---
-title: "fix_nutrients"
-author: "Ken"
-date: "14 March 2018"
+title: "fix_sediments"
+author: "Ouida"
+date: "15 March 2018"
 output: html_document
 ---
 
@@ -10,32 +10,43 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 Set up the packages
 ```{r}
-library(tidyverse) #install.packages("tidyverse")
-library(stringr)
+## install individual packages
+# install.packages('readr')
+# install.packages('dplyr')
+# install.packages('tidyr')
+# install.packages('janitor')
+
+## load individual packages
+library(readr)
+library(dplyr)
+library(tidyr)
 library(janitor)
 ```
 Load the data
+Sediment dataset accessed through the Zenodo repository. Data citation:
+Ritson-Williams, R., & Gates, R. D. (2016). Kaneohe Bay Sediment Data 2015 [Data set]. Zenodo. http://doi.org/10.5281/zenodo.61137
+
 ```{r}
-nutrients_raw <- read.csv("https://raw.githubusercontent.com/robertpdunn/kbay_physical/master/data/nutrient_data.csv")
-head(nutrients_raw)
+sediments_raw <- read.csv("https://zenodo.org/record/61137/files/Kbay_sediment_2015.csv")
+head(sediments_raw)
 ```
 
 Make a column for reef and fix the dates
 ```{r}
-nutrients <- clean_names(nutrients_raw)
-nutrients <- nutrients %>%
+sediments <- clean_names(sediments_raw)
+sediments <- sediments %>%
   mutate(reef= str_c("reef_",str_to_lower(site))) %>%
-  mutate("year_month"=floor_date(as.Date(nutrients$date,'%m/%d/%y'),unit="month"))
-head(nutrients)
+  mutate("year_month"=floor_date(as.Date(sediments$date,'%m/%d/%y'),unit="month"))
+head(sediments)
 ```
 Find means for each month
 ```{r}
-nutrients_monthly <- nutrients %>% 
+sediments_monthly <- sediments %>% 
   group_by(reef, year_month) %>%
   summarise(phosphate_mean=mean(phosphate),silicate_mean=mean(silicate),n_n_mean=mean(n_n),ammonia_mean=mean(ammonia,na.rm=TRUE),total_n_mean=mean(total_n,na.rm=TRUE)) %>% 
   ungroup() 
 ```
 save the file
 ```{r}
-write_csv(nutrients_monthly,"data_tidy/nutrients_monthly")
+write_csv(sediments_monthly,"data_tidy/sediments_monthly")
 ```
