@@ -12,7 +12,7 @@ library(janitor)
 library(skimr)
 library(lubridate)
 
-data<-read_csv("https://raw.githubusercontent.com/robertpdunn/kbay_physical/master/data/coral_health_allreefs.csv") #load data
+data<-read_csv("https://raw.githubusercontent.com/robertpdunn/kbay_physical/master/data_raw/coral_health_allreefs.csv",  na=c("","NA")) #load data
 str(data)
 
 ```
@@ -32,13 +32,31 @@ head(data_tidy,10)
 
 data_tidy$date<-gsub("x", "", data_tidy$date)
 head(data_tidy, 10)
+data_tidy$reef<-gsub("HIMB","himb",data_tidy$reef)
 
+data_tidy<- data_tidy %>%
+  mutate(health_score=str_replace(health_score,"missing-rolled down the hill","NA"))
+
+data_tidy$reef<- sub("^","reef_", data_tidy$reef)
+head(data_tidy)
+unique(data_tidy$reef)
+
+data_tidy<- data_tidy %>%
+  mutate("year_month"=floor_date(as.Date(data_tidy$date,'%m_%d_%Y'),unit="month"))
+head(data_tidy)
+data_tidy$health_score<-as.integer(data_tidy$health_score)
+str(data_tidy)
+head(data_tidy)
+ 
 ###still need to####
-
-#add "reef_" before each observation of reef
-#fix dates: flip to year_month_day
-
 #calculate average monthly value of health score?
+
+coral_health_monthly <- data_tidy %>% 
+  group_by(reef, species, year_month) %>%
+  summarise(health_score_mean=mean(health_score)) %>% 
+  ungroup() 
+
+head(coral_health_monthly)
 
 
 ```
