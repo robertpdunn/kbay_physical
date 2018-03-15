@@ -7,9 +7,9 @@ output: html_document
 
 ## Load libraries and data
 ```{r setup, echo = TRUE, message = FALSE, warning = FALSE}
-library(tidyverse)
-library(lubridate) # package for date manipulation
-library(tibbletime) 
+library(tidyverse)  # install.packages('tidyverse')
+library(lubridate)  # install.packages('lubridate')  # date manipulation
+library(tibbletime) # install.packages('tibbletime') # time series
 ```
 
 Load 7 light (PAR) datasets from Reef 25, 42, 44 and HIMB in Kaneohe Bay between 2014-2015
@@ -25,36 +25,36 @@ light_reef_himb_2015 <- read_csv("https://www.zenodo.org/record/160214/files/lig
 ```
 
 ## Wrangle Data
-Add an identifying column to denote which reef the light data came from
+Add identifying column to denote which reef the light data came from
 
-```{r}
-light_reef_25_2015$reef <- "reef_25"
-light_reef_42_2015$reef <- "reef_42"
-light_reef_42_2014$reef <- "reef_42"
-light_reef_44_2014$reef <- "reef_44"
-light_reef_44_2015$reef <- "reef_44"
-light_reef_himb_2014$reef <- "reef_himb"
-light_reef_himb_2015$reef <- "reef_himb"
+```{r rename columns}
+light_reef_25_2015 <- mutate(light_reef_25_2015, reef = "reef_25")
+light_reef_42_2015 <- mutate(light_reef_42_2015, reef = "reef_42")
+light_reef_42_2014 <- mutate(light_reef_42_2014, reef = "reef_42")
+light_reef_44_2014 <- mutate(light_reef_44_2014, reef = "reef_44")
+light_reef_44_2015 <- mutate(light_reef_44_2015, reef = "reef_44")
+light_reef_himb_2014 <-  mutate(light_reef_himb_2014, reef = "reef_himb")
+light_reef_himb_2015 <-  mutate(light_reef_himb_2015, reef = "reef_himb")
 ```
 
 Create a single data frame for light data from all 4 reefs
 
-```{r}
+```{r bind dli all reefs}
 light_all <- bind_rows(list(light_reef_25_2015,light_reef_42_2014,light_reef_42_2015, light_reef_44_2014, light_reef_44_2015, light_reef_himb_2014, light_reef_himb_2015))
 ```
 
 Calculate daily light integral (dli). First, group by reef and day. Second, take the daily mean of light and convert PAR from umol/m^2/s to mol/m^2/day. To do this, multiply by 0.0864. (1 µmol m-2 s-1 = 0.0864 mol m-2 d-1)
 
-```{r}
+```{r convert units}
 light_dli <- light_all %>%
   group_by(reef, date) %>%  # group by reef and day
-  summarize(dli = mean(`PAR_calibrated_umol/m^2/s`*0.0864, na.rm=T)) %>% # remove na's and convert units  
+  summarize(dli = mean(`PAR_calibrated_umol/m^2/s`*0.0864, na.rm=T)) %>% # remove na's and convert units
   ungroup()
 
 head(light_dli)
 ```
 Create monthly light product
-```{r}
+```{r create monthly product}
 dli_monthly <- light_dli %>%
   group_by(reef, month = month(date), year = year(date)) %>%
   summarise(dli_month_mean = mean(dli), 
@@ -64,30 +64,29 @@ dli_monthly <- light_dli %>%
   ungroup() %>%
   mutate(date = as.Date(paste(year, month, "01", sep = "-"), 
                         format = "%Y-%m-%d")) %>%   # add correct date format
-  select(date, reef,                   # select and reorder columns
+  select(date, reef,                   
          dli_month_mean, 
          dli_month_min, 
          dli_month_max, 
-         dli_month_var) 
+         dli_month_var) # select and reorder columns
 
 head(dli_monthly)
 ```
 Write data frame to .csv file
-```{r}
+```{r write csv}
 write_csv(dli_monthly, "data_tidy/dli_monthly.csv", na = "NA", append = FALSE)
 ```
 
 ## Plot daily light across all reefs
-```{r, plot, message = FALSE, warning = FALSE}
-
+```{r plot, message = FALSE, warning = FALSE}
 rolling_mean <- rollify(mean, window = 7) # 7-day rolling mean of dli data
 
 light_dli %>%
-  mutate(mean_7 = rolling_mean(dli)) %>%
+  mutate(mean_7 = rolling_mean(dli)) %>% # add rolling mean col to dataframe
   group_by(reef) %>%
-  ggplot(aes(x = date)) +
-  geom_line(alpha = .3, aes(y = dli, color = reef)) +
-  geom_line(size = 1, aes(y = mean_7, color = reef)) +
+  ggplot(aes(x = date)) + # plot date on x-axis
+  geom_line(alpha = .3, aes(y = dli, color = reef)) + # plot daily means
+  geom_line(size = 1, aes(y = mean_7, color = reef)) + # plot 7d smoothed
   labs(title = "Daily Light (7 day rolling mean)", x = "Date", y = "DLI (mol m-2 d-1)")
 ```
 
