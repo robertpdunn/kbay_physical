@@ -5,7 +5,7 @@ date: "15 March 2018"
 output: html_document
 ---
 
-```{r setup, include=FALSE #warning=FALSE, #message=FALSE, #eval=FALSE, #results='hide'}
+```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 Set up the packages
@@ -48,24 +48,30 @@ Check that dates are in proper YYYY-MM-DD format and convert to new year_month c
 ## therefore loaded dataset with read_csv instead to format dates as Date
 ## assign year_month to align with monthly datasets
 sediments <- sediments %>%  
- # mutate(date_formatted = as.Date(date,'%Y-%m-%d'))
+ # mutate(date_formatted = as.Date(date,'%Y-%m-%d')) ## not needed since dates are in ISO 8601 format already
   mutate(year_month=floor_date(date ,unit="month")) %>%
   arrange(.data$reef, .data$year_month, .data$sediment_grams_per_day, .data$date)
 head(sediments)
+```
 
-## select and order columns
+Select and order columns for inspection before creating summary monthly dataset
+```{r}
+## have chosen here to retain original sampling date in sediments but drop from monthly summary
 sediments <- sediments %>%
   select(.data$reef, .data$year_month, .data$sediment_grams_per_day, .data$date)
 head(sediments)
+```
 
-## find monthly means and drop sampling date column
+Find monthly means and drop sampling date column
+```{r}
 sediments_monthly <- sediments %>% 
   group_by(reef, year_month) %>%
   summarise(sediment_mean_grams_per_day=mean(sediment_grams_per_day)) %>% 
   ungroup() 
 sediments_monthly
 ```
-Save the file
+
+Save the new file
 ```{r}
 write_csv(sediments_monthly,"data_tidy/sediments_monthly.csv")
 ```
