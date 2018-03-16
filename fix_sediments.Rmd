@@ -5,57 +5,67 @@ date: "15 March 2018"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include=FALSE #warning=FALSE, #message=FALSE, #eval=FALSE, #results='hide'}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 Set up the packages
 ```{r}
-## install individual packages
+## install individual packages when there are issues with tidyverse
 # install.packages('readr')
 # install.packages('dplyr')
 # install.packages('tidyr')
 # install.packages('janitor')
+# install.packages('lubridate')
 
 ## load individual packages
 library(readr)
 library(dplyr)
 library(tidyr)
 library(janitor)
+library(lubridate)
 ```
 Load the data
-Sediment dataset accessed through the Zenodo repository. Data citation:
-Ritson-Williams, R., & Gates, R. D. (2016). Kaneohe Bay Sediment Data 2015 [Data set]. Zenodo. http://doi.org/10.5281/zenodo.61137
+Sediments dataset accessed directly at the Zenodo repository. Data citation:
+Ritson-Williams, R., and Gates, R. D. (2016). Kaneohe Bay Sediment Data 2015 [Data set]. Zenodo. http://doi.org/10.5281/zenodo.61137
 
 ```{r}
-sediments_raw <- read.csv("https://zenodo.org/record/61137/files/Kbay_sediment_2015.csv")
+sediments_raw <- read_csv("https://zenodo.org/record/61137/files/Kbay_sediment_2015.csv")
 head(sediments_raw)
 ```
 
-Make a column for reef and fix the dates
+Make a reef column with consistent site labels
 ```{r}
-
-## cleaned headers and reef record names
+## clean headers and reef record names
 sediments <- clean_names(sediments_raw)
 sediments <- sediments %>%
   mutate(reef = gsub("reef", "reef_", site)) %>%
   mutate(reef = gsub("HIMB", "reef_himb", reef))
+```
+
+Check that dates are in proper YYYY-MM-DD format and convert to new year_month column
+```{r}
+## note that loading dataset with read.csv formatted dates as factors
+## therefore loaded dataset with read_csv instead to format dates as Date
+## assign year_month to align with monthly datasets
+sediments <- sediments %>%  
+ # mutate(date_formatted = as.Date(date,'%Y-%m-%d'))
+  mutate(year_month=floor_date(date ,unit="month")) %>%
+  arrange(.data$reef, .data$year_month, .data$sediment_grams_per_day, .data$date)
+head(sediments)
+
 ## select and order columns
 sediments <- sediments %>%
-  select(.data$reef, .data$date, .data$sediment_grams_per_day)
+  select(.data$reef, .data$year_month, .data$sediment_grams_per_day, .data$date)
 head(sediments)
-## assign dates to first of each month to align with other streamlined datasets
-# sediments <- sediments %>%  
-#   mutate("year_month"=floor_date(as.Date(sediments$date,'%m/%d/%y'),unit="month"))
 
-```
-Find means for each month
-```{r}
+## find monthly means and drop sampling date column
 sediments_monthly <- sediments %>% 
   group_by(reef, year_month) %>%
   summarise(sediment_mean_grams_per_day=mean(sediment_grams_per_day)) %>% 
   ungroup() 
+sediments_monthly
 ```
-save the file
+Save the file
 ```{r}
-write_csv(sediments_monthly,"data_tidy/sediments_monthly")
+write_csv(sediments_monthly,"data_tidy/sediments_monthly.csv")
 ```
